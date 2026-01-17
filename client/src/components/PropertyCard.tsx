@@ -1,7 +1,11 @@
 import { Link } from "wouter";
-import { MapPin, Bed, Bath, Square } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Heart, Phone, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import VerifiedBadge from "./VerifiedBadge";
+import RatingStars from "./RatingStars";
+import WishlistButton from "./WishlistButton";
 
 interface PropertyCardProps {
   id: string;
@@ -11,7 +15,18 @@ interface PropertyCardProps {
   location: string;
   type: string;
   status: string;
+  statusLabel?: string;
   description: string;
+  isVerified?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  isNew?: boolean;
+  isPopular?: boolean;
+  bedrooms?: number;
+  bathrooms?: number;
+  area?: string;
+  ownerAvatar?: string;
+  ownerName?: string;
 }
 
 export default function PropertyCard({ 
@@ -22,61 +37,116 @@ export default function PropertyCard({
   location, 
   type, 
   status,
-  description 
+  statusLabel,
+  description,
+  isVerified = false,
+  rating,
+  reviewCount,
+  isNew = false,
+  isPopular = false,
+  bedrooms = 3,
+  bathrooms = 2,
+  area = "150m²",
+  ownerAvatar,
+  ownerName,
 }: PropertyCardProps) {
   return (
-    <Link href={`/biens/${id}`}>
-      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group bg-white" data-testid={`card-property-${id}`}>
-        <div className="relative aspect-[16/10] overflow-hidden">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group bg-white border-0 shadow-md">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Link href={`/biens/${id}`}>
           <img 
             src={image} 
             alt={title} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
-            <Badge 
-              className="bg-white/95 text-foreground hover:bg-white font-semibold"
-              data-testid={`badge-status-${id}`}
-            >
-              {status}
-            </Badge>
-            <Badge 
-              className="bg-gradient-to-r from-primary to-[#8B5CF6] text-white border-0 font-bold text-base px-3 py-1"
-              data-testid={`badge-price-${id}`}
-            >
-              {price}
-            </Badge>
-          </div>
-        </div>
+        </Link>
         
-        <div className="p-5">
-          <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1" data-testid={`text-title-${id}`}>
+        {/* Wishlist Button */}
+        <div className="absolute top-3 right-3">
+          <WishlistButton propertyId={id} />
+        </div>
+
+        {/* Status & Special Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <Badge 
+            className={`font-semibold ${
+              status === "vente" 
+                ? "bg-emerald-500 hover:bg-emerald-600 text-white" 
+                : "bg-blue-500 hover:bg-blue-600 text-white"
+            }`}
+          >
+            {statusLabel || (status === "vente" ? "À vendre" : "À louer")}
+          </Badge>
+          {isNew && (
+            <Badge className="bg-amber-500 hover:bg-amber-600 text-white font-semibold">
+              Nouveau
+            </Badge>
+          )}
+          {isPopular && (
+            <Badge className="bg-rose-500 hover:bg-rose-600 text-white font-semibold">
+              Populaire
+            </Badge>
+          )}
+        </div>
+
+        {/* Price Badge */}
+        <div className="absolute bottom-3 left-3">
+          <Badge className="bg-gray-900/80 backdrop-blur-sm text-white font-bold text-lg px-3 py-1.5">
+            {price}
+          </Badge>
+        </div>
+      </div>
+      
+      <div className="p-4">
+        {/* Verified & Rating Row */}
+        <div className="flex items-center justify-between mb-2">
+          {isVerified && <VerifiedBadge size="sm" />}
+          {rating && <RatingStars rating={rating} reviewCount={reviewCount} size="sm" />}
+        </div>
+
+        <Link href={`/biens/${id}`}>
+          <h3 className="font-bold text-lg mb-1 group-hover:text-emerald-600 transition-colors line-clamp-1">
             {title}
           </h3>
-          
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
-            <span data-testid={`text-location-${id}`} className="line-clamp-1">{location}</span>
-          </div>
-          
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{description}</p>
+        </Link>
+        
+        <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
+          <MapPin className="h-4 w-4 flex-shrink-0 text-emerald-500" />
+          <span className="line-clamp-1">{location}</span>
+        </div>
 
-          <div className="flex items-center gap-4 pt-3 border-t">
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Bed className="h-4 w-4" />
-              <span>3</span>
+        {/* Property Details */}
+        <div className="flex items-center gap-4 py-3 border-t border-b border-gray-100 mb-3">
+          {bedrooms > 0 && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              <Bed className="h-4 w-4 text-gray-400" />
+              <span>{bedrooms}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Bath className="h-4 w-4" />
-              <span>2</span>
+          )}
+          {bathrooms > 0 && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              <Bath className="h-4 w-4 text-gray-400" />
+              <span>{bathrooms}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Square className="h-4 w-4" />
-              <span>150m²</span>
-            </div>
+          )}
+          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+            <Square className="h-4 w-4 text-gray-400" />
+            <span>{area}</span>
           </div>
         </div>
-      </Card>
-    </Link>
+
+        {/* Quick Actions */}
+        <div className="flex gap-2">
+          <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Phone className="h-4 w-4 mr-1" />
+            Appeler
+          </Button>
+          <Button size="sm" variant="outline" className="flex-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+            <MessageCircle className="h-4 w-4 mr-1" />
+            Message
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 }

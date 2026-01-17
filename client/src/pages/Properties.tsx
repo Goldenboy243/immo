@@ -3,15 +3,16 @@ import { useLocation } from "wouter";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyFilter from "@/components/PropertyFilter";
 
-import house1 from "@assets/stock_images/luxury_modern_house__fa3f4f9e.jpg";
-import house2 from "@assets/stock_images/luxury_modern_house__6f277bde.jpg";
-import house3 from "@assets/stock_images/luxury_modern_house__a74684b9.jpg";
-import house4 from "@assets/stock_images/luxury_modern_house__f3e6569e.jpg";
-import apartment1 from "@assets/stock_images/modern_apartment_int_41935162.jpg";
-import apartment2 from "@assets/stock_images/modern_apartment_int_c8cd17ed.jpg";
-import apartment3 from "@assets/stock_images/modern_apartment_int_9c6252d0.jpg";
-import land1 from "@assets/stock_images/empty_land_plot_for__b52bf2bf.jpg";
-import land2 from "@assets/stock_images/empty_land_plot_for__9b92e56d.jpg";
+// Placeholder images from Unsplash
+const house1 = "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80";
+const house2 = "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80";
+const house3 = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80";
+const house4 = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80";
+const apartment1 = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80";
+const apartment2 = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80";
+const apartment3 = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80";
+const land1 = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80";
+const land2 = "https://images.unsplash.com/photo-1628624747186-a941c476b7ef?w=800&q=80";
 
 export default function Properties() {
   const [location] = useLocation();

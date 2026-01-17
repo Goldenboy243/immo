@@ -9,14 +9,14 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ icon: Icon, title, description }: ServiceCardProps) {
   return (
-    <Card className="p-8 text-center hover:shadow-lg transition-all duration-300 bg-white border-0 shadow-md">
-      <div className="flex justify-center mb-6">
-        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-purple-100 flex items-center justify-center">
-          <Icon className="h-10 w-10 text-primary" />
+    <Card className="p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-white border-0 shadow-md group cursor-pointer">
+      <div className="flex justify-center mb-5">
+        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center group-hover:from-emerald-100 group-hover:to-teal-200 transition-colors">
+          <Icon className="h-8 w-8 text-emerald-600" />
         </div>
       </div>
-      <h3 className="text-xl font-bold mb-3" data-testid={`text-service-${title.toLowerCase()}`}>{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="text-lg font-bold mb-2 group-hover:text-emerald-600 transition-colors">{title}</h3>
+      <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
     </Card>
   );
 }

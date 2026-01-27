@@ -14,6 +14,9 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import StudentHousing from "@/pages/StudentHousing";
 import Hotels from "@/pages/Hotels";
+import AdminDashboard from "@/pages/AdminDashboard";
+import Pricing from "@/pages/Pricing";
+import Verification from "@/pages/Verification";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -28,6 +31,9 @@ function Router() {
       <Route path="/vendre" component={Sell} />
       <Route path="/a-propos" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/tarifs" component={Pricing} />
+      <Route path="/verification" component={Verification} />
       <Route component={NotFound} />
     </Switch>
   );

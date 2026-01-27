@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, ChevronDown, LogIn, UserPlus, Heart, Bell } from "lucide-react";
+import { Menu, X, User, ChevronDown, LogIn, UserPlus, Heart, Bell, LogOut, Settings, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,14 +9,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CategoryTabs, { Category } from "./CategoryTabs";
 import CitySelector, { City, drcCities } from "./CitySelector";
+import AuthModal from "./AuthModal";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>("immobilier");
   const [selectedCity, setSelectedCity] = useState<City | null>(drcCities[0]);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<"login" | "signup">("login");
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const openLoginModal = () => {
+    setAuthModalTab("login");
+    setAuthModalOpen(true);
+  };
+
+  const openSignupModal = () => {
+    setAuthModalTab("signup");
+    setAuthModalOpen(true);
+  };
 
   const navLinks = [
     { path: "/", label: "Accueil" },
@@ -86,28 +102,81 @@ export default function Header() {
             {/* User Dropdown - Desktop */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="hidden md:flex items-center gap-2 border-gray-200 hover:border-emerald-300 hover:bg-emerald-50"
-                >
-                  <User className="h-4 w-4" />
-                  <span>Compte</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
+                {isAuthenticated ? (
+                  <Button 
+                    variant="ghost" 
+                    className="hidden md:flex items-center gap-2 hover:bg-emerald-50"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="max-w-[100px] truncate">{user?.name}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    className="hidden md:flex items-center gap-2 border-gray-200 hover:border-emerald-300 hover:bg-emerald-50"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Compte</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem className="cursor-pointer">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Se connecter
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Créer un compte
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-emerald-600">
-                  Publier une annonce
-                </DropdownMenuItem>
+                {isAuthenticated ? (
+                  <>
+                    <div className="px-2 py-1.5 text-sm font-medium">
+                      {user?.name}
+                      <div className="text-xs text-gray-500 font-normal">{user?.email}</div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Home className="mr-2 h-4 w-4" />
+                      Mes annonces
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Heart className="mr-2 h-4 w-4" />
+                      Favoris
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Paramètres
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <Link href="/publier">
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600">
+                        Publier une annonce
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer text-red-600" onClick={logout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Déconnexion
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem className="cursor-pointer" onClick={openLoginModal}>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Se connecter
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer" onClick={openSignupModal}>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Créer un compte
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <Link href="/publier">
+                      <DropdownMenuItem className="cursor-pointer text-emerald-600">
+                        Publier une annonce
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -165,18 +234,52 @@ export default function Header() {
 
             {/* Mobile Auth Buttons */}
             <div className="mt-4 pt-4 border-t border-gray-100 space-y-2 px-2">
-              <Button variant="outline" className="w-full">
-                <LogIn className="mr-2 h-4 w-4" />
-                Se connecter
-              </Button>
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Créer un compte
-              </Button>
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-medium">{user?.name}</div>
+                      <div className="text-sm text-gray-500">{user?.email}</div>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-red-600 border-red-200"
+                    onClick={logout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Déconnexion
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-full" onClick={openLoginModal}>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Se connecter
+                  </Button>
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={openSignupModal}>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Créer un compte
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        defaultTab={authModalTab}
+      />
     </header>
   );
 }

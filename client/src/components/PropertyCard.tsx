@@ -11,12 +11,12 @@ interface PropertyCardProps {
   id: string;
   image: string;
   title: string;
-  price: string;
+  price: string | number;
   location: string;
   type: string;
   status: string;
   statusLabel?: string;
-  description: string;
+  description?: string;
   isVerified?: boolean;
   rating?: number;
   reviewCount?: number;
@@ -24,7 +24,7 @@ interface PropertyCardProps {
   isPopular?: boolean;
   bedrooms?: number;
   bathrooms?: number;
-  area?: string;
+  area?: string | number;
   ownerAvatar?: string;
   ownerName?: string;
 }
@@ -50,6 +50,16 @@ export default function PropertyCard({
   ownerAvatar,
   ownerName,
 }: PropertyCardProps) {
+  // Format price for display
+  const formattedPrice = typeof price === 'number' 
+    ? `$${price.toLocaleString()}` 
+    : price;
+  
+  // Format area for display
+  const formattedArea = typeof area === 'number'
+    ? `${area}m²`
+    : area;
+
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group bg-white border-0 shadow-md">
       <div className="relative aspect-[16/10] overflow-hidden">
@@ -92,7 +102,7 @@ export default function PropertyCard({
         {/* Price Badge */}
         <div className="absolute bottom-3 left-3">
           <Badge className="bg-gray-900/80 backdrop-blur-sm text-white font-bold text-lg px-3 py-1.5">
-            {price}
+            {formattedPrice}
           </Badge>
         </div>
       </div>
@@ -131,7 +141,7 @@ export default function PropertyCard({
           )}
           <div className="flex items-center gap-1.5 text-sm text-gray-600">
             <Square className="h-4 w-4 text-gray-400" />
-            <span>{area}</span>
+            <span>{formattedArea}</span>
           </div>
         </div>
 
